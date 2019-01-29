@@ -1,38 +1,7 @@
 import React, { Component } from 'react';
 
 import Square from './Square';
-
-const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-let codes = [1, 2, 3, 4, 5, 6];
-let result = [];
-
-const generateColor = () => {
-  return `RGB(${(Math.random() * 256).toFixed(0)}, ${(Math.random() * 256).toFixed(0)}, ${(Math.random() * 256).toFixed(0)})`
-}
-
-let styles = {
-  containerStyle: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  boxStyle: {
-    height: 175,
-    width: 175,
-    borderRadius: 15,
-    backgroundColor: 'black',
-    display: 'inline-flex',
-    margin: 10,
-  }
-}
-
-let boxStyles = [];
+import { colorChooser, boxStyles, result } from '../functions/functions';
 
 export default class Squares extends Component {
   state = {
@@ -40,79 +9,14 @@ export default class Squares extends Component {
     win: false,
   };
 
-  colorChooser = (win = false) => {
-    shuffleArray(codes);
-
-    if (win) {
-      console.log('Am I ALIVE?');
-
-      result = [];
-      codes.forEach(value => {
-        result.push({
-          color: this.props.rightColor,
-          code: value,
-        })
-      })
-
-      boxStyles = []
-      result.forEach(value => boxStyles.push({
-        height: 175,
-        width: 175,
-        borderRadius: 15,
-        backgroundColor: value.color,
-        display: 'inline-flex',
-        margin: 10,
-      }))
-    } else {
-      console.log('AM I DEAD?');
-      codes.forEach(value => {
-        if (value === 1) {
-          result.push({
-            color: this.props.rightColor,
-            code: value,
-          })
-        } else {
-          result.push({
-            color: generateColor(),
-            code: value,
-          })
-        }
-      })
-      boxStyles = []
-      result.forEach(value => boxStyles.push({
-        height: 175,
-        width: 175,
-        borderRadius: 15,
-        backgroundColor: value.color,
-        display: 'inline-flex',
-        margin: 10,
-      }))
-    }
-  };
+  containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 
   winHandler = () => {
-    console.log(result);
-    console.log(boxStyles);
-
-    this.setState({
-      loading: true,
-      win: true,
-    })
-    const color = result.find(value => value.code === 1).color;
-    result.map(value => {
-      return {
-        ...value,
-        color,
-      }
-    })
-    boxStyles.map(value => {
-      return {
-        ...value,
-        backgroundColor: color,
-      }
-    })
-    console.log(this.state.win);
-    this.colorChooser(true);
+    colorChooser(true, this.props.rightColor);
     this.setState({ loading: false });
   }
 
@@ -126,22 +30,22 @@ export default class Squares extends Component {
   }
 
   componentDidMount() {
-    this.colorChooser();
+    colorChooser(false, this.props.rightColor);
     this.setState({ loading: false })
   }
 
   renderizer = () => {
     if (this.state.loading) {
-      return <p>Loading.</p>
+      return <p style={{ textAlign: 'center', fontSize: '2rem' }}>Loading.</p>
     } else {
       return (
         <div id="content" style={{ paddingTop: '2%' }}>
-          <div style={styles.containerStyle}>
+          <div style={this.containerStyle}>
             {this.renderSquare(0)}
             {this.renderSquare(1)}
             {this.renderSquare(2)}
           </div>
-          <div style={styles.containerStyle}>
+          <div style={this.containerStyle}>
             {this.renderSquare(3)}
             {this.renderSquare(4)}
             {this.renderSquare(5)}
